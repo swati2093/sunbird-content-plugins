@@ -16,7 +16,7 @@
                 </div>
                 <div class="field" ng-class="editMode ? '' : 'disabled'">
                     <label>Keywords</label>
-                    <tags-input ng-model="content.keywords" ng-class="editMode ? '' : 'remove-delete'" display-property="lemma" placeholder="Enter Keywords" replace-spaces-with-dashes="false">
+                    <tags-input ng-model="content.keywords" ng-class="editMode ? '' : 'remove-delete'" display-property="lemma" placeholder="Enter Keywords" replace-spaces-with-dashes="false" class="keywords">
                         <auto-complete source="loadKeywords($query)" min-length="0" load-on-focus="true" load-on-empty="true" template="my-content-custom-template"></auto-complete>
                     </tags-input>
                     <script type="text/ng-template" id="my-content-custom-template">

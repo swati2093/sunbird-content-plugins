@@ -294,7 +294,7 @@ ul.fancytree-container {
 }
 
 .table-of-contents-child-icon {
-    transform: rotate(180deg);
+    transform: rotate(90deg);
     line-height: 1.2;
 }
 
@@ -394,11 +394,6 @@ span.fancytree-expander {
 .ui.two.buttons.table-of-contents-btn>.ui.basic.button {
     border-radius: 0;
     border: 1px solid #ddd;
-}
-
-.table-of-contents-child-icon {
-    transform: rotate(180deg);
-    line-height: 1.2;
 }
 
 span.fancytree-custom-icon {
