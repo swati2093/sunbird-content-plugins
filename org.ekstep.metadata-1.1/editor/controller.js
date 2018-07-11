@@ -447,6 +447,10 @@ angular.module('org.ekstep.metadataform', []).controller('metadataForm', ['$scop
         return returnData;
     };
 
+    !EventBus.hasEventListener('metadata:controller:init') && ecEditor.addEventListener("metadata:controller:init",function(){
+        $scope.init();
+    })
+
     $scope.init()
 
 }]);
