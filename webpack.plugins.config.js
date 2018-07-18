@@ -20,6 +20,7 @@ Object.defineProperty(RegExp.prototype, "toJSON", {
 let commonConfig =   {
     replaceRegisterMeta: /(registerMetaPage).*[\s]*?(objectType:.*?])([^)]+)\)/,
     replaceLoadNgModule: /\b(loadNgModules)\b.*?\)/,
+    replaceBreadCrumb: /(registerBreadcrumb)([^)]+)\)/,
     replaceEndComma: /;\s*$/,
     pluginBasePath: './',
     pluginBundlePath: '/editor/plugin.dist.js',
@@ -59,7 +60,8 @@ function packagePlugins(plugins) {
         let manifestURL = `${commonConfig.pluginBasePath}${plugin}/manifest.json`;        
         let pluginContent = fs.readFileSync(`${commonConfig.pluginBasePath}${plugin}/editor/plugin.js`, 'utf8');  
         let isSetLoadNgModule = commonConfig.hasOwnProperty('replaceLoadNgModule');
-        let isSetRegisterMeta = commonConfig.hasOwnProperty('replaceRegisterMeta');      
+        let isSetRegisterMeta = commonConfig.hasOwnProperty('replaceRegisterMeta');  
+        let isSetBreadCrumb = commonConfig.hasOwnProperty('replaceBreadCrumb');      
         if (fs.existsSync(`${commonConfig.pluginBasePath}${plugin}${commonConfig.pluginBundlePath}`)) {
             fs.unlinkSync(`${commonConfig.pluginBasePath}${plugin}${commonConfig.pluginBundlePath}`);
         }
@@ -74,7 +76,7 @@ function packagePlugins(plugins) {
             let count = 0;
             let matchLoadNgModule = pluginContent.match(commonConfig.replaceLoadNgModule);
             let matchRegisterMeta = pluginContent.match(commonConfig.replaceRegisterMeta);
-    
+            let matchBreadCrumb = pluginContent.match(commonConfig.replaceBreadCrumb);
             if (matchLoadNgModule !== null && isSetLoadNgModule) {
                 commonConfig.replaceLoadNgModule =  (typeof commonConfig.replaceLoadNgModule === 'string') ? new RegExp(commonConfig.replaceLoadNgModule, 'g') : new RegExp(commonConfig.replaceLoadNgModule, 'g');            
                 pluginContent = uglifyjs.minify(pluginContent.replace(commonConfig.replaceLoadNgModule, function ($0) {
@@ -83,9 +85,17 @@ function packagePlugins(plugins) {
                     count++;
                     return dash;
                 }))
+            }
+            else if (matchBreadCrumb !== null && isSetBreadCrumb) {
+                commonConfig.replaceBreadCrumb =  (typeof commonConfig.replaceBreadCrumb === 'string') ? new RegExp(commonConfig.replaceBreadCrumb, 'g') : new RegExp(commonConfig.replaceLoadNgModule, 'g');            
+                pluginContent = uglifyjs.minify(pluginContent.replace(commonConfig.replaceLoadNgModule, function ($0) {
+                    let dash;  
+                    dash = `registerBreadCrumb({templateURL:${templatePathArr[count]}, controllerURL:${controllerPathArr[count]}, allowTemplateCache: true})`
+                    count++;
+                    return dash;
+                }))
             } else if (matchRegisterMeta !== null && isSetRegisterMeta) {
                 commonConfig.replaceRegisterMeta =  (typeof commonConfig.replaceRegisterMeta === 'string') ? new RegExp(commonConfig.replaceRegisterMeta, 'g') : new RegExp(commonConfig.replaceRegisterMeta, 'g');
-
                 pluginContent = uglifyjs.minify(pluginContent.replace(commonConfig.replaceRegisterMeta, function ($1, $2, $3) {
                     let dash;                    
                     dash = `registerMetaPage({${$3}, templateURL: ${templatePathArr[count]}, controllerURL: ${controllerPathArr[count]}, allowTemplateCache: true})`
