@@ -26,12 +26,11 @@
       instance._customNavigationPlugins.push(event.target);
     });
 
-    //Register plugin for custom navigation
+    //De-Register plugin for custom navigation
     EkstepRendererAPI.addEventListener("renderer:navigation:deregister",function(event){
-      var index = _.findIndex(instance._customNavigationPlugins, function(pluginInstance){ return pluginInstance.id == event.target.id});
-      if (index > -1) {
-        instance._customNavigationPlugins.splice(index, 1);
-      }
+      instance._customNavigationPlugins = instance._customNavigationPlugins.filter(function(p) {
+        return p && (p._data.id != event.target._data.id);
+      });
     });
 
     //If register call plugin next method
