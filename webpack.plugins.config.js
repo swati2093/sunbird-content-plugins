@@ -1,32 +1,28 @@
 const path = require('path');
-const PLUGIN_PATH = process.env.CE_COREPLUGINS || './plugins';
 const webpack = require('webpack');
 const glob = require('glob');
 const uglifyjs = require('uglify-js');
 const expose = require('expose-loader');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const baseConfig = require('./webpack.base.config')
 const fs = require('fs');
 const entryPlus = require('webpack-entry-plus');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const frameWork =  baseConfig[process.env.frameWork];
+console.log(frameWork);
 
-const frameworkPlugins = process.env.frameworkCorePlugins.split(',').map(function (item) {
-    return item.trim();
-});
+// const frameworkPlugins = process.env.frameworkCorePlugins.split(',').map(function (item) {
+//     return item.trim();
+// });
 
-Object.defineProperty(RegExp.prototype, "toJSON", {
-    value: RegExp.prototype.toString
-});
+// Object.defineProperty(RegExp.prototype, "toJSON", {
+//     value: RegExp.prototype.toString
+// });
 
 let commonConfig =   {
-    replaceRegisterMeta: /(registerMetaPage).*[\s]*?(objectType:.*?])([^)]+)\)/,
-    replaceLoadNgModule: /\b(loadNgModules)\b.*?\)/,
-    replaceBreadCrumb: /(registerBreadcrumb)([^)]+)\)/,
-    replaceEndComma: /;\s*$/,
     pluginBasePath: './',
     pluginBundlePath: '/editor/plugin.dist.js',
     packageFileName: 'coreplugins.js',
-    dropConsole : process.env.dropConsole || false,
-    mangle: process.env.mangle || false,
     outputPath: './app/scripts',
     externalFiles: [
         './app/scripts/coreplugins.js',
@@ -37,7 +33,7 @@ let entryFiles = []
 
 function getEntryFiles() {
     entryFiles = [{ 
-            entryFiles: packagePlugins(frameworkPlugins),
+            entryFiles: packagePlugins(frameWork.corePlugins),
             outputName: commonConfig.packageFileName,
         },
         {
