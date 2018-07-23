@@ -8,16 +8,7 @@ const baseConfig = require('./webpack.base.config')
 const fs = require('fs');
 const entryPlus = require('webpack-entry-plus');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-const frameWork =  baseConfig[process.env.frameWork];
-console.log(frameWork);
-
-// const frameworkPlugins = process.env.frameworkCorePlugins.split(',').map(function (item) {
-//     return item.trim();
-// });
-
-// Object.defineProperty(RegExp.prototype, "toJSON", {
-//     value: RegExp.prototype.toString
-// });
+const frameWork = (process.env.frameWork) ? baseConfig[process.env.frameWork] : 'Please make sure env variable "process.env.frameWork" is set';
 
 let commonConfig =   {
     pluginBasePath: './',
@@ -37,7 +28,7 @@ function getEntryFiles() {
             outputName: commonConfig.packageFileName,
         },
         {
-            entryFiles: packageVendorCss(frameworkPlugins),
+            entryFiles: packageVendorCss(frameWork.corePlugins),
             outputName: 'plugin-vendor',
         },
     ];
@@ -49,19 +40,18 @@ function getEntryFiles() {
 
 function packagePlugins(plugins) {
     let pluginPackageArr = []; // Default coreplugin
-    plugins.forEach(function (plugin) {
+    plugins.forEach(function (plugin) {        
         let dependenciesArr = [];
         let packagedDepArr = [];
         let manifest = JSON.parse(fs.readFileSync(`${commonConfig.pluginBasePath}${plugin}/manifest.json`))
         let manifestURL = `${commonConfig.pluginBasePath}${plugin}/manifest.json`;        
         let pluginContent = fs.readFileSync(`${commonConfig.pluginBasePath}${plugin}/editor/plugin.js`, 'utf8');  
-        let isSetLoadNgModule = commonConfig.hasOwnProperty('replaceLoadNgModule');
-        let isSetRegisterMeta = commonConfig.hasOwnProperty('replaceRegisterMeta');  
-        let isSetBreadCrumb = commonConfig.hasOwnProperty('replaceBreadCrumb');      
+        let isSetLoadNgModule = frameWork.hasOwnProperty('replaceLoadNgModule');
+        let isSetRegisterMeta = frameWork.hasOwnProperty('replaceRegisterMeta');  
+        let isSetBreadCrumb = frameWork.hasOwnProperty('replaceBreadCrumb');      
         if (fs.existsSync(`${commonConfig.pluginBasePath}${plugin}${commonConfig.pluginBundlePath}`)) {
             fs.unlinkSync(`${commonConfig.pluginBasePath}${plugin}${commonConfig.pluginBundlePath}`);
         }
-        commonConfig.replaceEndComma =  (typeof commonConfig.replaceEndComma === 'string') ? new RegExp(commonConfig.replaceEndComma, '') : new RegExp(commonConfig.replaceEndComma);
         if (manifest.editor.views && pluginContent) {
             let controllerPathArr = [];
             let templatePathArr = [];
@@ -70,12 +60,11 @@ function packagePlugins(plugins) {
                 templatePathArr[i] = (obj.template) ? `require("${obj.template}")` : undefined;
             });
             let count = 0;
-            let matchLoadNgModule = pluginContent.match(commonConfig.replaceLoadNgModule);
-            let matchRegisterMeta = pluginContent.match(commonConfig.replaceRegisterMeta);
-            let matchBreadCrumb = pluginContent.match(commonConfig.replaceBreadCrumb);
+            let matchLoadNgModule = pluginContent.match(frameWork.replaceLoadNgModule);
+            let matchRegisterMeta = pluginContent.match(frameWork.replaceRegisterMeta);
+            let matchBreadCrumb = pluginContent.match(frameWork.replaceBreadCrumb);
             if (matchLoadNgModule !== null && isSetLoadNgModule) {
-                commonConfig.replaceLoadNgModule =  (typeof commonConfig.replaceLoadNgModule === 'string') ? new RegExp(commonConfig.replaceLoadNgModule, 'g') : new RegExp(commonConfig.replaceLoadNgModule, 'g');            
-                pluginContent = uglifyjs.minify(pluginContent.replace(commonConfig.replaceLoadNgModule, function ($0) {
+                pluginContent = uglifyjs.minify(pluginContent.replace(frameWork.replaceLoadNgModule, function ($0) {
                     let dash;                    
                     dash = `loadNgModules(${templatePathArr[count]},${controllerPathArr[count]}, true)`
                     count++;
@@ -83,16 +72,14 @@ function packagePlugins(plugins) {
                 }))
             }
             else if (matchBreadCrumb !== null && isSetBreadCrumb) {
-                commonConfig.replaceBreadCrumb =  (typeof commonConfig.replaceBreadCrumb === 'string') ? new RegExp(commonConfig.replaceBreadCrumb, 'g') : new RegExp(commonConfig.replaceLoadNgModule, 'g');            
-                pluginContent = uglifyjs.minify(pluginContent.replace(commonConfig.replaceLoadNgModule, function ($0) {
+                pluginContent = uglifyjs.minify(pluginContent.replace(frameWork.replaceLoadNgModule, function ($0) {
                     let dash;  
                     dash = `registerBreadCrumb({templateURL:${templatePathArr[count]}, controllerURL:${controllerPathArr[count]}, allowTemplateCache: true})`
                     count++;
                     return dash;
                 }))
             } else if (matchRegisterMeta !== null && isSetRegisterMeta) {
-                commonConfig.replaceRegisterMeta =  (typeof commonConfig.replaceRegisterMeta === 'string') ? new RegExp(commonConfig.replaceRegisterMeta, 'g') : new RegExp(commonConfig.replaceRegisterMeta, 'g');
-                pluginContent = uglifyjs.minify(pluginContent.replace(commonConfig.replaceRegisterMeta, function ($1, $2, $3) {
+                pluginContent = uglifyjs.minify(pluginContent.replace(frameWork.replaceRegisterMeta, function ($1, $2, $3) {
                     let dash;                    
                     dash = `registerMetaPage({${$3}, templateURL: ${templatePathArr[count]}, controllerURL: ${controllerPathArr[count]}, allowTemplateCache: true})`
                     count++;
@@ -114,7 +101,7 @@ function packagePlugins(plugins) {
                 }
             });
         }        
-        dependenciesArr.push(`org.ekstep.pluginframework.pluginManager.registerPlugin(${JSON.stringify(manifest)}, ${pluginContent.code.replace(commonConfig.replaceEndComma, "")})`)
+        dependenciesArr.push(`org.ekstep.pluginframework.pluginManager.registerPlugin(${JSON.stringify(manifest)}, ${pluginContent.code.replace(frameWork.replaceEndComma, "")})`)
         fs.appendFile(`${commonConfig.pluginBasePath}${plugin}${commonConfig.pluginBundlePath}`, [...dependenciesArr].join("\n"))
         pluginPackageArr.push(`${commonConfig.pluginBasePath}${plugin}${commonConfig.pluginBundlePath}`)
     })
@@ -252,14 +239,14 @@ module.exports = {
             uglifyOptions: {
                 compress: {
                     dead_code: true,
-                    drop_console: commonConfig.dropConsole,
+                    drop_console: frameWork.dropConsole,
                     global_defs: {
                         DEBUG: true
                     },
                     passes: 1,
                 },
                 ecma: 5,
-                mangle: commonConfig.mangle
+                mangle: frameWork.mangle
             },
             sourceMap: true
         }),

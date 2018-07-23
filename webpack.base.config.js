@@ -1,8 +1,8 @@
 module.exports = {
     collectionEditor: {
-        replaceRegisterMeta: /(registerMetaPage).*[\s]*?(objectType:.*?])([^)]+)\)/,
-        replaceLoadNgModule: /\b(loadNgModules)\b.*?\)/,
-        replaceBreadCrumb: /(registerBreadcrumb)([^)]+)\)/,
+        replaceRegisterMeta: /(registerMetaPage).*[\s]*?(objectType:.*?])([^)]+)\)/g,
+        replaceLoadNgModule: /\b(loadNgModules)\b.*?\)/g,
+        replaceBreadCrumb: /(registerBreadcrumb)([^)]+)\)/g,
         replaceEndComma: /;\s*$/,
         dropConsole : false,
         mangle: false,   
