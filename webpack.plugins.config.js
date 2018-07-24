@@ -8,7 +8,7 @@ const baseConfig = require('./webpack.base.config')
 const fs = require('fs');
 const entryPlus = require('webpack-entry-plus');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-const frameWork = (process.env.frameWork) ? baseConfig[process.env.frameWork] : console.log('Please make sure env variable "process.env.frameWork" is set');
+const frameWork = (process.env.editorType) ? baseConfig[process.env.editorType] : console.log('Please make sure env variable "process.env.frameWork" is set');
 
 console.log(frameWork);
 
