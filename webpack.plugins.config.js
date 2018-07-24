@@ -18,7 +18,7 @@ let commonConfig =   {
     packageFileName: 'coreplugins.js',
     outputPath: './app/scripts',
     externalFiles: [
-        '../Content-Editor/app/scripts/coreplugins.js',
+        '../app/scripts/coreplugins.js',
     ]
 }
 
