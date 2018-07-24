@@ -8,7 +8,9 @@ const baseConfig = require('./webpack.base.config')
 const fs = require('fs');
 const entryPlus = require('webpack-entry-plus');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-const frameWork = (process.env.frameWork) ? baseConfig[process.env.frameWork] : 'Please make sure env variable "process.env.frameWork" is set';
+const frameWork = (process.env.frameWork) ? baseConfig[process.env.frameWork] : console.log('Please make sure env variable "process.env.frameWork" is set');
+
+console.log(frameWork);
 
 let commonConfig =   {
     pluginBasePath: './',
@@ -16,7 +18,7 @@ let commonConfig =   {
     packageFileName: 'coreplugins.js',
     outputPath: './app/scripts',
     externalFiles: [
-        './app/scripts/coreplugins.js',
+        '../Content-Editor/app/scripts/coreplugins.js',
     ]
 }
 
