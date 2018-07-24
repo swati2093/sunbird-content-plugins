@@ -16,7 +16,7 @@ let commonConfig =   {
     pluginBasePath: './',
     pluginBundlePath: '/editor/plugin.dist.js',
     packageFileName: 'coreplugins.js',
-    outputPath: './app/scripts',
+    outputPath: '../app/scripts/',
     externalFiles: [
         '../app/scripts/coreplugins.js',
     ]
