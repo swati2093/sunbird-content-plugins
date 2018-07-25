@@ -22,7 +22,7 @@ module.exports = {
         ]
     },
     contentEditor:{
-        replaceLoadNgModule: /\b(loadNgModules)\b.*?\)/,
+        replaceLoadNgModule: /\b(loadNgModules)\b.*?\)/g,
         replaceEndComma: /;\s*$/,
         dropConsole : false,
         mangle: false,    
@@ -60,7 +60,7 @@ module.exports = {
         ]
     },
     genericEditor:{
-        replaceLoadNgModule: /\b(loadNgModules)\b.*?\)/,
+        replaceLoadNgModule: /\b(loadNgModules)\b.*?\)/g,
         replaceEndComma: /;\s*$/,
         dropConsole : false,
         mangle: false,
