@@ -25,7 +25,7 @@ module.exports = {
         replaceLoadNgModule: /\b(loadNgModules)\b.*?\)/g,
         replaceEndComma: /;\s*$/,
         dropConsole : false,
-        mangle: false,    
+        mangle: true,    
         corePlugins: [
             "org.ekstep.assessmentbrowser-1.1",
             "org.ekstep.assetbrowser-1.2",

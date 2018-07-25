@@ -10,7 +10,6 @@ const entryPlus = require('webpack-entry-plus');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const frameWork = (process.env.editorType) ? baseConfig[process.env.editorType] : console.log('Please make sure env variable "process.env.frameWork" is set');
 
-console.log(frameWork);
 
 let commonConfig =   {
     pluginBasePath: './',
@@ -18,7 +17,7 @@ let commonConfig =   {
     packageFileName: 'coreplugins.js',
     outputPath: 'dist',
     externalFiles: [
-        '../content-editor/scripts/coreplugins.js',
+        '../sunbird-content-editor/app/scripts/coreplugins.js',
     ]
 }
 
@@ -42,6 +41,7 @@ function getEntryFiles() {
 
 function packagePlugins(plugins) {
     let pluginPackageArr = []; // Default coreplugin
+    if(commonConfig.externalFiles.length>0) pluginPackageArr.push(...commonConfig.externalFiles) // external files then only push    
     plugins.forEach(function (plugin) {        
         let dependenciesArr = [];
         let packagedDepArr = [];
@@ -107,7 +107,6 @@ function packagePlugins(plugins) {
         fs.appendFile(`${commonConfig.pluginBasePath}${plugin}${commonConfig.pluginBundlePath}`, [...dependenciesArr].join("\n"))
         pluginPackageArr.push(`${commonConfig.pluginBasePath}${plugin}${commonConfig.pluginBundlePath}`)
     })
-    if(commonConfig.externalFiles.length>0) pluginPackageArr.push(...commonConfig.externalFiles) // external files then only push    
     return pluginPackageArr;
 }
 
