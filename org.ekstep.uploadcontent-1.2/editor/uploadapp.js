@@ -283,8 +283,12 @@ angular.module('org.ekstep.uploadcontent-1.2', []).controller('uploadController'
                 var signedURL = res.data.result.pre_signed_url;
                 var config = {
                     processData: false,
-                    contentType: contentType
+                    contentType: contentType,
+                    headers: {
+                        'x-ms-blob-type': 'BlockBlob'
+                    }
                 }
+
                 $scope.contentService.uploadDataToSignedURL(signedURL, $scope.uploader.getFile(0), config, function(err, res) {
                     if (err) {
                         $scope.showLoader(false);
